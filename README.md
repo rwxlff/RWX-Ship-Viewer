@@ -353,11 +353,15 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 
 ---
 
-## ⭐ Star History
+## Star History
 
-If you find this extension useful, please consider giving it a star on GitHub! It helps others discover the project.
-
-[![Star History Chart](https://api.star-history.com/svg?repos=rwxlff/RWX-Ship-Viewer&type=Date)](https://star-history.com/#rwxlff/RWX-Ship-Viewer&Date)
+<a href="https://www.star-history.com/#rwxlff/RWX-Ship-Viewer&type=date&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=rwxlff/RWX-Ship-Viewer&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=rwxlff/RWX-Ship-Viewer&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=rwxlff/RWX-Ship-Viewer&type=date&legend=top-left" />
+ </picture>
+</a>
 
 ---
 
