@@ -353,7 +353,7 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 
 ---
 
-## Star History
+## ⭐ Star History
 
 <a href="https://www.star-history.com/#rwxlff/RWX-Ship-Viewer&type=date&legend=top-left">
  <picture>
