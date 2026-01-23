@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RWX Ship Viewer</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 750px;
+      padding: 0;
+      font-family: 'Electrolize', Arial, sans-serif;
+      background: linear-gradient(135deg, #0a1e2e 0%, #0d2438 100%);
+      color: #e0f3ff;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #1a4a6f 0%, #0f3552 100%);
+      padding: 10px;
+      border-bottom: 2px solid rgba(64, 169, 255, 0.3);
+    }
+
+    .header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo img {
+      width: 40px;
+      height: 40px;
+      filter: brightness(0) saturate(100%) invert(65%) sepia(16%) saturate(1249%) hue-rotate(155deg) brightness(93%) contrast(90%);
+    }
+
+    .title-block {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+    }
+
+    .title-block h1 {
+      font-size: 18px;
+      color: #40a9ff;
+      text-shadow: 0 0 10px rgba(64, 169, 255, 0.5);
+    }
+
+    .title-line {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    .header-right {
+      padding: 0px 10px;
+      font-size: 18px;
+      text-shadow: 0 0 10px rgba(64, 169, 255, 0.5);
+      font-weight: bold;
+      letter-spacing: 1px;
+      color: #88c0d0;
+      text-transform: uppercase;
+    }
+
+    .version {
+      font-size: 11px;
+      color: #88c0d0;
+      white-space: nowrap;
+    }
+
+    .content {
+      padding: 20px 20px 10px;
+    }
+
+    .info-box {
+      background: rgba(16, 32, 48, 0.5);
+      border: 1px solid rgba(64, 169, 255, 0.3);
+      border-radius: 6px;
+      padding: 15px;
+      margin-bottom: 15px;
+    }
+
+    .info-box h3 {
+      font-size: 13px;
+      color: #40a9ff;
+      margin-bottom: 8px;
+    }
+
+    .info-box p {
+      font-size: 12px;
+      line-height: 1.6;
+      color: #d0e7f5;
+    }
+
+    .buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .btn {
+      padding: 12px;
+      background: linear-gradient(135deg, #1a4a6f 0%, #0f3552 100%);
+      color: #40a9ff;
+      border: 1px solid rgba(64, 169, 255, 0.3);
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-align: center;
+      text-decoration: none;
+      display: block;
+    }
+
+    .btn:hover {
+      background: linear-gradient(135deg, #2a5a7f 0%, #1f4562 100%);
+      border-color: #40a9ff;
+      box-shadow: 0 0 12px rgba(64, 169, 255, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #40a9ff 0%, #1a7fd4 100%);
+      color: #fff;
+      border-color: #40a9ff;
+      font-size: 14px;
+      padding: 14px;
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #5bb9ff 0%, #2a8fe4 100%);
+      box-shadow: 0 0 16px rgba(64, 169, 255, 0.6);
+    }
+
+    .features {
+      border-radius: 6px;
+      padding: 2px;
+      margin-top: 15px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+    }
+
+    .features-column {
+      min-width: 0;
+    }
+
+    .features ul {
+      list-style: none;
+      padding-left: 0;
+      margin: 0;
+    }
+
+    .features li {
+      font-size: 11px;
+      color: #88c0d0;
+      padding: 5px 0;
+      padding-left: 18px;
+      position: relative;
+      line-height: 1.4;
+    }
+
+    .features li:before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: #4caf50;
+      font-weight: bold;
+    }
+
+    .footer {
+      padding: 10px 20px;
+      background: rgba(10, 22, 34, 0.5);
+      border-top: 1px solid rgba(64, 169, 255, 0.2);
+      text-align: center;
+    }
+
+    .footer p {
+      font-size: 10px;
+      color: #6b8da6;
+    }
+
+    .footer a {
+      color: #40a9ff;
+      text-decoration: none;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    .status {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      font-size: 12px;
+      color: #88c0d0;
+      padding: 12px;
+      background: rgba(76, 175, 80, 0.1);
+      border: 1px solid rgba(76, 175, 80, 0.3);
+      border-radius: 4px;
+      margin-bottom: 15px;
+    }
+
+    .status-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .status-header > div {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .position-controls {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      padding-top: 12px;
+      border-top: 1px solid rgba(64, 169, 255, 0.2);
+    }
+
+    .position-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      color: #88c0d0;
+      font-weight: 500;
+    }
+
+    .position-label select,
+    .position-label input {
+      padding: 4px 8px;
+      background: rgba(16, 32, 48, 0.6);
+      color: #e0f3ff;
+      border: 1px solid rgba(64, 169, 255, 0.3);
+      border-radius: 3px;
+      font-size: 11px;
+      outline: none;
+      transition: all 0.3s;
+    }
+
+    .position-label select {
+      cursor: pointer;
+      min-width: 110px;
+    }
+
+    .position-label input {
+      width: 50px;
+      text-align: center;
+    }
+
+    .position-label select:focus,
+    .position-label input:focus {
+      border-color: #40a9ff;
+      box-shadow: 0 0 6px rgba(64, 169, 255, 0.3);
+    }
+
+    .position-label input::-webkit-inner-spin-button,
+    .position-label input::-webkit-outer-spin-button {
+      opacity: 1;
+    }
+
+    .status-indicator {
+      width: 8px;
+      height: 8px;
+      background: #4caf50;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .keybind-box {
+      background: rgba(16, 32, 48, 0.5);
+      border: 1px solid rgba(64, 169, 255, 0.3);
+      border-radius: 6px;
+      padding: 12px;
+      margin-bottom: 15px;
+    }
+
+    .keybind-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .keybind-header > span {
+      font-size: 12px;
+      color: #88c0d0;
+      font-weight: 500;
+    }
+
+    .keybind-display {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .key-badge {
+      background: linear-gradient(135deg, #1a4a6f 0%, #0f3552 100%);
+      color: #fff;
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: bold;
+      border: 1px solid rgba(64, 169, 255, 0.4);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      min-width: 50px;
+      text-align: center;
+    }
+
+    .key-plus {
+      color: #6b8da6;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .key-select {
+      background: linear-gradient(135deg, #1a4a6f 0%, #0f3552 100%);
+      color: #fff;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: bold;
+      border: 1px solid rgba(64, 169, 255, 0.4);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      cursor: pointer;
+      outline: none;
+      transition: all 0.3s;
+      min-width: 50px;
+      text-align: center;
+    }
+
+    .key-select:hover {
+      border-color: #40a9ff;
+      box-shadow: 0 0 8px rgba(64, 169, 255, 0.4);
+    }
+
+    .key-select:focus {
+      border-color: #40a9ff;
+      box-shadow: 0 0 8px rgba(64, 169, 255, 0.5);
+    }
+
+    .key-select option {
+      background: #0f3552;
+      color: #fff;
+      padding: 8px;
+      font-size: 11px;
+    }
+
+    .key-select option:hover {
+      background: #1a4a6f;
+      color: #40a9ff;
+    }
+
+    .key-select option:checked {
+      background: #40a9ff;
+      color: #fff;
+    }
+
+    .keybind-hint {
+      font-size: 10px;
+      color: #6b8da6;
+      font-style: italic;
+    }
+
+    .hangar-timer {
+      background: rgba(16, 32, 48, 0.5);
+      border: 1px solid rgba(64, 169, 255, 0.3);
+      border-radius: 6px;
+      padding: 12px;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    .hangar-timer h3 {
+      font-size: 12px;
+      color: #40a9ff;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    .timer-display {
+      font-size: 35px;
+      font-weight: bold;
+      color: #fff;
+      margin-bottom: 8px;
+      font-family: 'Courier New', monospace;
+      text-shadow: 0 0 8px rgba(64, 169, 255, 0.5);
+    }
+
+    .lights {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .light {
+      width: 35px;
+      height: 10px;
+      border-radius: 10%;
+      background: #222;
+      transition: all 0.3s;
+    }
+
+    .light.green {
+      background: #00aa00;
+      box-shadow: 0 0 8px #00ff00;
+    }
+
+    .light.red {
+      background: #aa0000;
+      box-shadow: 0 0 8px #ff0000;
+    }
+
+    .timer-status {
+      font-size: 12px;
+      color: #88c0d0;
+      line-height: 1.4;
+    }
+
+    .timer-status .closed {
+      color: #ff6b6b;
+      font-weight: bold;
+    }
+
+    .timer-status .open {
+      color: #4caf50;
+      font-weight: bold;
+    }
+
+    .timer-status .resetting {
+      color: #ffa726;
+      font-weight: bold;
+      animation: blink 0.5s infinite;
+    }
+
+    @keyframes blink {
+      0%, 49% { opacity: 1; }
+      50%, 100% { opacity: 0.3; }
+    }
+
+    .timer-controls {
+      display: flex;
+      gap: 5px;
+      justify-content: center;
+      margin-top: 10px;
+    }
+
+    .timer-btn {
+      padding: 5px 10px;
+      background: linear-gradient(135deg, #1a3a52 0%, #0f2838 100%);
+      color: #88c0d0;
+      border: 1px solid rgba(64, 169, 255, 0.3);
+      border-radius: 3px;
+      font-size: 11px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: bold;
+    }
+
+    .timer-btn:hover {
+      background: linear-gradient(135deg, #2a4a62 0%, #1f3848 100%);
+      border-color: #40a9ff;
+      box-shadow: 0 0 8px rgba(64, 169, 255, 0.4);
+      color: #fff;
+    }
+
+    .timer-btn:active {
+      transform: translateY(1px);
+    }
+
+    .layout {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(136, 192, 208, 0.3);
+      border: 1px solid rgba(64, 169, 255, 0.3);
+      transition: 0.3s;
+      border-radius: 24px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 2px;
+      bottom: 2px;
+      background: #88c0d0;
+      transition: 0.3s;
+      border-radius: 50%;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    input:checked + .slider {
+      background: rgba(76, 175, 80, 0.5);
+      border-color: #4caf50;
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(20px);
+      background: #4caf50;
+      box-shadow: 0 2px 6px rgba(76, 175, 80, 0.5);
+    }
+
+    .slider:hover {
+      border-color: #40a9ff;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo">
+      <img src="https://cdn.robertsspaceindustries.com/orion-v3/icons/vehicle-8c461392.svg" alt="Ship Icon">
+
+      <div class="title-block">
+        <div class="title-line">
+          <h1>RWX Ship Viewer</h1>
+          <span class="version">v1.0.0</span>
+        </div>
+      </div>
+
+      <div class="header-right">
+        SETTINGS
+      </div>
+
+    </div>
+  </div>
+
+
+  <div class="content">
+    <!-- Seção superior com 2 colunas -->
+    <div class="layout">
+      <div class="left-column">
+        <div class="status">
+          <div class="status-header">
+            <div>
+              <div class="status-indicator"></div>
+              <span id="statusButton">Floating button active and ready</span>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="toggleButton" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+          
+          <div class="position-controls">
+            <label class="position-label">
+              Position:
+              <select id="positionCorner">
+                <option value="bottom-right">Bottom Right</option>
+                <option value="bottom-left">Bottom Left</option>
+                <option value="top-right">Top Right</option>
+                <option value="top-left">Top Left</option>
+              </select>
+            </label>
+            
+            <label class="position-label">
+              X:
+              <input type="number" id="positionX" min="0" max="200" value="20" />
+            </label>
+            
+            <label class="position-label">
+              Y:
+              <input type="number" id="positionY" min="0" max="200" value="20" />
+            </label>
+          </div>
+        </div>
+
+        <div class="keybind-box">
+          <div class="keybind-header">
+            <span>Keybind:</span>
+            <div class="keybind-display">
+              <span class="key-badge">Ctrl</span>
+              <span class="key-plus">+</span>
+              <span class="key-badge">Shift</span>
+              <span class="key-plus">+</span>
+              <select id="keybindSelect" class="key-select">
+
+                <!-- Letras A-Z -->
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+                <option value="D">D</option>
+                <option value="E">E</option>
+                <option value="F">F</option>
+                <option value="G">G</option>
+                <option value="H">H</option>
+                <option value="I">I</option>
+                <option value="J">J</option>
+                <option value="K">K</option>
+                <option value="L">L</option>
+                <option value="M">M</option>
+                <option value="N">N</option>
+                <option value="O">O</option>
+                <option value="P">P</option>
+                <option value="Q">Q</option>
+                <option value="R">R</option>
+                <option value="S" selected>S</option>
+                <option value="T">T</option>
+                <option value="U">U</option>
+                <option value="V">V</option>
+                <option value="W">W</option>
+                <option value="X">X</option>
+                <option value="Y">Y</option>
+                <option value="Z">Z</option>
+                
+                <!-- Números 0-9 -->
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                
+                <!-- Teclas de Função F1-F12 -->
+                <option value="F1">F1</option>
+                <option value="F2">F2</option>
+                <option value="F3">F3</option>
+                <option value="F4">F4</option>
+                <option value="F5">F5</option>
+                <option value="F6">F6</option>
+                <option value="F7">F7</option>
+                <option value="F8">F8</option>
+                <option value="F9">F9</option>
+                <option value="F10">F10</option>
+                <option value="F11">F11</option>
+                <option value="F12">F12</option>
+                
+                <!-- Teclas Especiais -->
+                <option value="Enter">Enter</option>
+                <option value="Insert">Insert</option>
+                <option value="Delete">Delete</option>
+                <option value="Home">Home</option>
+                <option value="End">End</option>
+                <option value="PageUp">PgUp</option>
+                <option value="PageDown">PgDn</option>
+                
+                <!-- Setas -->
+                <option value="ArrowUp">↑ Up</option>
+                <option value="ArrowDown">↓ Down</option>
+                <option value="ArrowLeft">← Left</option>
+                <option value="ArrowRight">→ Right</option>
+
+              </select>
+            </div>
+          </div>
+          <div class="keybind-hint">
+            Press the keybind to quickly open the RWX Ship Viewer
+          </div>
+        </div>
+
+        <div class="info-box">
+          <h3>Welcome!</h3>
+          <p>View all Star Citizen ships with detailed information, prices, and technical specifications quickly and easily. All information is collected from the RSI website and the UEX Corp website.</p>
+        </div>
+      </div>
+
+      <div class="right-column">
+        <div class="hangar-timer">
+          <h3>Executive Hangar Timer</h3>
+          <div class="timer-display" id="mainTimer">00:00:00</div>
+
+          <div class="lights">
+            <div class="light"></div>
+            <div class="light"></div>
+            <div class="light"></div>
+            <div class="light"></div>
+            <div class="light"></div>
+          </div>
+
+          <div class="timer-status" id="statusText"></div>
+
+          <div class="timer-controls">
+            <button class="timer-btn" id="minusBtn">-5 min</button>
+            <button class="timer-btn" id="plusBtn">+5 min</button>
+            <button class="timer-btn" id="resetBtn">Reset</button>
+          </div>
+        </div>
+
+        <div class="buttons">
+          <button id="openViewer" class="btn btn-primary">
+            Open RWX Ship Viewer
+          </button>
+          <button id="openRSI" class="btn">
+            Go to RSI Pledge Store
+          </button>
+          <button id="donateBtn" class="btn btn-donate">
+            💙 Support The Project
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Seção inferior com features em 4 colunas -->
+    <div class="features">
+      <div class="features-column">
+        <ul>
+          <li>Configurable floating button</li>
+          <li>Configurable keybind</li>
+          <li>Direct access to 245+ ships</li>
+        </ul>
+      </div>
+      <div class="features-column">
+        <ul>
+          <li>USD, EUR and GBP prices</li>
+          <li>aUEC prices and buy locations</li>
+          <li>Technical specifications</li>
+        </ul>
+      </div>
+      <div class="features-column">
+        <ul>
+          <li>Photo and video gallery</li>
+          <li>Loaner ships matrix</li>
+          <li>Smart search and filters</li>
+        </ul>
+      </div>
+      <div class="features-column">
+        <ul>
+          <li>Favorites system</li>
+          <li>Sortable columns</li>
+          <li>Executive Hangar Timer</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>Developed by <strong>Roger Wolff</strong></p>
+    <p><a href="https://github.com/rwxlff/RWX-Ship-Viewer" target="_blank">RWX Ship Viewer on GitHub</a></p>
+  </div>
+
+  <script src="timer.js"></script>
+  <script src="popup.js"></script>
+
+</body>
+</html>
