@@ -31,14 +31,14 @@
 
 ## 🖥️ Screenshots
 
-| Main View | Ship Details | Media Gallery |
+| Main View | Media Gallery | Ship Details |
 |-----------|--------------|---------------|
 | <img width="288" height="180" alt="img1" src="https://github.com/user-attachments/assets/631f0ce7-9828-48a0-8fdc-ab1b670ceb65" /> | <img width="288" height="180" alt="img2" src="https://github.com/user-attachments/assets/20894146-cdf8-4cf7-9288-ed103a0a72a2" /> | <img width="288" height="180" alt="img3" src="https://github.com/user-attachments/assets/5cf0c954-fcd0-47d1-851f-6688da102560" />
 
 
-| Price Comparison | Buy Locations | Hangar Timer |
+| Executive Hangar Timer | Favorites system | Smart search and filters |
 |------------------|---------------|--------------|
-| ![Screenshot 4](screenshots/price-comparison.png) | ![Screenshot 5](screenshots/buy-locations.png) | ![Screenshot 6](screenshots/hangar-timer.png) |
+| <img width="288" height="180" alt="img4" src="https://github.com/user-attachments/assets/7121604e-a1e0-41e8-962d-3c0833ed0929" /> | <img width="288" height="180" alt="img5" src="https://github.com/user-attachments/assets/2088f8f3-31ab-4e67-8548-fc558fc442f7" /> | <img width="288" height="180" alt="img6" src="https://github.com/user-attachments/assets/43eb8bab-2846-4363-8953-3c91e46dae0d" />
 
 ---
 
