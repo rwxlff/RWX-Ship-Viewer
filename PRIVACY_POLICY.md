@@ -240,7 +240,7 @@ The Extension does **NOT** use any analytics, tracking, or telemetry services. W
 If you have any questions, concerns, or requests regarding this Privacy Policy or the Extension's data practices, please contact:
 
 **Developer:** Roger Wolff  
-**Email:** [rwxlff+sv@gmail.com]  
+**Email:** rwxlff+sv@gmail.com  
 **GitHub:** [https://github.com/rwxlff](https://github.com/rwxlff)  
 **Project Page:** [https://github.com/rwxlff/RWX-Ship-Viewer](https://github.com/rwxlff/RWX-Ship-Viewer)
 
@@ -296,3 +296,4 @@ API requests to RSI (US-based) and UEX Corp are made directly from your browser 
 
 
 *Last reviewed and updated: January 24, 2026*
+
