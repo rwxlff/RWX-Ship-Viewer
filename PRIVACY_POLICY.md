@@ -147,7 +147,7 @@ The Extension does **NOT** integrate with any third-party analytics, advertising
 
 ## 6. Children's Privacy
 
-The Extension is not directed at children under the age of 13. We do not knowingly collect information from children. If you believe a child has provided information through the Extension, please contact us immediately at [your-email@example.com].
+The Extension is not directed at children under the age of 13. We do not knowingly collect information from children. If you believe a child has provided information through the Extension, please contact us immediately at rwxlff+sv@gmail.com.
 
 ---
 
@@ -296,4 +296,5 @@ API requests to RSI (US-based) and UEX Corp are made directly from your browser 
 
 
 *Last reviewed and updated: January 24, 2026*
+
 
