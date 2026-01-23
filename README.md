@@ -33,7 +33,10 @@
 
 | Main View | Ship Details | Media Gallery |
 |-----------|--------------|---------------|
-| ![Screenshot 1](screenshots/main-view.png) | ![Screenshot 2](screenshots/ship-details.png) | ![Screenshot 3](screenshots/media-gallery.png) |
+| <img width="128" height="80" alt="img1" src="https://github.com/user-attachments/assets/631f0ce7-9828-48a0-8fdc-ab1b670ceb65" />
+ | <img width="128" height="80" alt="img2" src="https://github.com/user-attachments/assets/20894146-cdf8-4cf7-9288-ed103a0a72a2" />
+ | <img width="128" height="80" alt="img3" src="https://github.com/user-attachments/assets/5cf0c954-fcd0-47d1-851f-6688da102560" />
+ |
 
 | Price Comparison | Buy Locations | Hangar Timer |
 |------------------|---------------|--------------|
