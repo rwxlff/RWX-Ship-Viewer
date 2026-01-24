@@ -216,7 +216,7 @@ RWX-Ship-Viewer/
 │   └── icon128.png
 ├── README.md               # This file
 ├── LICENSE                 # MIT License
-└── PRIVACY.md              # Privacy Policy
+└── PRIVACY_POLICY.md       # Privacy Policy
 ```
 
 ---
