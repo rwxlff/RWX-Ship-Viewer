@@ -350,7 +350,7 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 
 - **Developer:** Roger Wolff
 - **GitHub:** [@rwxlff](https://github.com/rwxlff)
-- **Email:** [your-email@example.com]
+- **Email:** rwxlff-sv@gmail.com
 
 ---
 
