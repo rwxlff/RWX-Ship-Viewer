@@ -183,7 +183,6 @@ For complete details, see our [Privacy Policy](https://github.com/rwxlff/RWX-Shi
 
 - `activeTab`: Inject viewer interface on current page
 - `storage`: Save user preferences locally
-- `webRequest`: Access RSI and UEX Corp APIs
 - `scripting`: Execute viewer scripts
 - Host permissions: Only RSI and UEX Corp domains
 
