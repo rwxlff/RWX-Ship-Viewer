@@ -46,7 +46,7 @@
 
 ### From Chrome Web Store (Recommended)
 
-1. Visit the [Chrome Web Store page](#) *(link will be available after publication)*
+1. Visit the [Chrome Web Store page](https://chromewebstore.google.com/detail/rwx-ship-viewer/cgjpinccclodgcfpclndkgekpfplmkek)
 2. Click **"Add to Chrome"**
 3. Confirm permissions
 4. Done! The floating button will appear on any webpage
