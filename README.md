@@ -75,7 +75,7 @@
 ### Opening the Ship Viewer
 
 **Method 1: Floating Button**
-- Look for the floating ship icon on any webpage
+- Look for the floating ship icon on RSI webpage
 - Click it to open the viewer
 
 **Method 2: Keyboard Shortcut**
