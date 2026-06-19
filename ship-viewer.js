@@ -50,6 +50,9 @@
   const CACHE_LOANER_MATRIX_KEY = 'rwx_loaner_matrix_cache';
   const CACHE_DURATION_24H = 24 * 60 * 60 * 1000;
 
+  // Array global para rastrear todos os iframes de vídeo
+  let allVideoIframes = [];
+
   function getCache(key, duration) {
     try {
       const cached = localStorage.getItem(key);
@@ -1557,19 +1560,38 @@
           const locations = uexAPI.getAUECLocationsByName(ship.name);
           
           if (locations && locations.length > 0) {
+            // Formatar todos os nomes primeiro
+            const locationsWithFormatted = locations.map(loc => ({
+              ...loc,
+              formattedTerminal: formatTerminalName(loc.terminal)
+            }));
+            
+            // Remover duplicados baseado no nome formatado
+            const uniqueLocations = [];
+            const seenTerminals = new Set();
+            
+            locationsWithFormatted.forEach(loc => {
+              const terminalKey = loc.formattedTerminal.toLowerCase().trim();
+              if (!seenTerminals.has(terminalKey)) {
+                seenTerminals.add(terminalKey);
+                uniqueLocations.push(loc);
+              }
+            });
+            
+            console.log(`📍 ${ship.name}: ${locations.length} locations found, ${uniqueLocations.length} unique after formatting`);
+            
             // Ordenar por preço (menor para maior)
-            const sortedLocations = [...locations].sort((a, b) => a.price - b.price);
+            const sortedLocations = uniqueLocations.sort((a, b) => a.price - b.price);
             
             // Construir linhas da tabela
             const locationRows = sortedLocations.map((loc, index) => {
               const priceFormatted = loc.price ? loc.price.toLocaleString('en-US') : '-';
               const bgColor = index % 2 === 0 ? 'rgba(16, 32, 48, 0.4)' : 'rgba(10, 22, 34, 0.4)';
-              const terminalFormatted = formatTerminalName(loc.terminal); // ← FORMATAÇÃO APLICADA
               
               return `
                 <tr style="background: ${bgColor};">
                   <td style="padding: 8px; color: #d0e7f5; font-size: 11px; border-bottom: 1px solid rgba(64, 169, 255, 0.1);">
-                    ${terminalFormatted}
+                    ${loc.formattedTerminal}
                   </td>
                   <td style="padding: 8px; color: #88c0d0; font-size: 11px; font-weight: bold; text-align: right; border-bottom: 1px solid rgba(64, 169, 255, 0.1);">
                     ${priceFormatted}
@@ -1769,7 +1791,7 @@
                 }
                 
                 if (youtubeId) {
-                  videoUrl = `https://www.youtube.com/embed/${youtubeId}`;
+                  videoUrl = `https://www.youtube.com/embed/${youtubeId}?enablejsapi=1`;
                 }
               }
             }
@@ -2212,6 +2234,7 @@
             iframe.setAttribute('frameborder', '0');
             iframe.setAttribute('allowfullscreen', 'true');
             iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
+            iframe.setAttribute('id', `video-iframe-${ship.name.replace(/\s/g, '-')}`);
             Object.assign(iframe.style, {
               position: 'absolute',
               top: '0',
@@ -2219,9 +2242,58 @@
               width: '100%',
               height: '100%'
             });
-            
+
             videoWrapper.appendChild(iframe);
             videoContent.appendChild(videoWrapper);
+
+            // Adicionar iframe ao array global
+            allVideoIframes.push(iframe);
+            console.log(`📹 Video iframe registered (${allVideoIframes.length} total)`);
+
+            // Função para pausar todos os outros vídeos
+            function pauseAllOtherVideos(currentIframe) {
+              allVideoIframes.forEach(otherIframe => {
+                if (otherIframe !== currentIframe) {
+                  try {
+                    otherIframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+                  } catch (e) {
+                    // Ignora erros
+                  }
+                }
+              });
+              console.log('⏸️ All other videos paused');
+            }
+
+            // Controle de play/pause ao trocar de abas
+            photosTab.onclick = () => {
+              switchTab(true);
+              // Pausar vídeo ao sair da aba de vídeo
+              try {
+                iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+                console.log('🎬 Video paused');
+              } catch (e) {
+                console.warn('Could not pause video:', e);
+              }
+            };
+
+            videoTab.onclick = () => {
+              switchTab(false);
+              
+              // Pausar todos os outros vídeos antes de tocar este
+              pauseAllOtherVideos(iframe);
+              
+              // Pequeno delay para garantir que a aba está visível
+              setTimeout(() => {
+                try {
+                  // Enviar comando para reproduzir via postMessage (YouTube API)
+                  iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+                  console.log('🎬 Video playing');
+                } catch (e) {
+                  console.warn('Could not play video:', e);
+                }
+              }, 100);
+            };
+
           }
           
           // Montar estrutura
@@ -2398,6 +2470,17 @@
           const existingDetails = tr.nextElementSibling;
           
           if (existingDetails && existingDetails.classList.contains('details-row')) {
+
+            // Remover iframes de vídeo do array global antes de remover a linha
+            const videoIframesInDetails = existingDetails.querySelectorAll('iframe');
+            videoIframesInDetails.forEach(videoIframe => {
+              const index = allVideoIframes.indexOf(videoIframe);
+              if (index > -1) {
+                allVideoIframes.splice(index, 1);
+                console.log(`🗑️ Video iframe removed from tracking (${allVideoIframes.length} remaining)`);
+              }
+            });
+
             // Recolher
             existingDetails.remove();
             tr.classList.remove('expanded');

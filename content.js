@@ -134,6 +134,14 @@
       keybindKey = message.key;
       console.log('Keybind updated to: Ctrl+Shift+' + keybindKey);
     }
+
+    if (message.action === 'toggleViewer') {
+      console.log('📨 Received toggleViewer command from background');
+      window.postMessage({
+        type: 'OPEN_SHIP_VIEWER',
+        source: 'rwx-extension'
+      }, '*');
+    } 
   });
 
   // Atalho de teclado: Ctrl+Shift+[Key]

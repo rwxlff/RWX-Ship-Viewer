@@ -78,7 +78,7 @@
     }
 
     .content {
-      padding: 20px 20px 10px;
+      padding: 15px;
     }
 
     .info-box {
@@ -149,10 +149,10 @@
     .features {
       border-radius: 6px;
       padding: 2px;
-      margin-top: 15px;
+      margin-top: 10px;
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 15px;
+      gap: 10px;
     }
 
     .features-column {
@@ -494,6 +494,20 @@
       transform: translateY(1px);
     }
 
+    .timer-btn-sync {
+      background: linear-gradient(135deg, #1a5238 0%, #0f3528 100%);
+      color: #4caf50;
+      border-color: rgba(76, 175, 80, 0.4);
+      flex: 1;
+    }
+
+    .timer-btn-sync:hover {
+      background: linear-gradient(135deg, #2a6248 0%, #1f4538 100%);
+      border-color: #4caf50;
+      box-shadow: 0 0 8px rgba(76, 175, 80, 0.4);
+      color: #fff;
+    }
+
     .layout {
       display: flex;
       gap: 20px;
@@ -564,7 +578,7 @@
       <div class="title-block">
         <div class="title-line">
           <h1>RWX Ship Viewer</h1>
-          <span class="version">v1.0.0</span>
+          <span class="version">v1.0.3</span>
         </div>
       </div>
 
@@ -724,8 +738,7 @@
           <div class="timer-status" id="statusText"></div>
 
           <div class="timer-controls">
-            <button class="timer-btn" id="minusBtn">-5 min</button>
-            <button class="timer-btn" id="plusBtn">+5 min</button>
+            <button class="timer-btn timer-btn-sync" id="syncBtn">Hangar just opened!</button>
             <button class="timer-btn" id="resetBtn">Reset</button>
           </div>
         </div>

@@ -1,12 +1,11 @@
 {
   "manifest_version": 3,
   "name": "RWX Ship Viewer",
-  "version": "1.0.0",
-  "description": "View all Star Citizen ships with detailed information, prices, and technical specifications quickly and easily. All information is collected from the RSI website and the UEX Corp website.",
+  "version": "1.0.3",
+  "description": "View all Star Citizen ships with detailed specs and prices, collected from the official RSI and UEX Corp websites.",
   "permissions": [
     "activeTab",
     "scripting",
-    "webRequest",
     "storage"
   ],
   "host_permissions": [
@@ -26,6 +25,15 @@
       "128": "icons/icon128.png"
     }
   },
+  "commands": {
+    "open-ship-viewer": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+S",
+        "mac": "Command+Shift+S"
+      },
+      "description": "Open RWX Ship Viewer"
+    }
+  },
   "icons": {
     "16": "icons/icon16.png",
     "32": "icons/icon32.png",
@@ -34,7 +42,10 @@
   },
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
+      "matches": [
+        "https://robertsspaceindustries.com/*",
+        "https://*.robertsspaceindustries.com/*"
+      ],
       "js": ["content.js"],
       "run_at": "document_idle"
     }
