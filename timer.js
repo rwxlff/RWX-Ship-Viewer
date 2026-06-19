@@ -2,38 +2,75 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   // Constantes exatas (Atualizado 12/06/2026)
-  const CYCLE_DRIFT_MS     = 226;
-  const DESIGN_ONLINE_MS   = 65  * 60 * 1000;
-  const DESIGN_OFFLINE_MS  = 120 * 60 * 1000;
-  const DESIGN_CYCLE_MS    = DESIGN_ONLINE_MS + DESIGN_OFFLINE_MS;
-  const CYCLE_DURATION     = DESIGN_CYCLE_MS + CYCLE_DRIFT_MS;
-  const OPEN_DURATION      = Math.round(CYCLE_DURATION * DESIGN_ONLINE_MS / DESIGN_CYCLE_MS);
-  const CLOSE_DURATION     = CYCLE_DURATION - OPEN_DURATION;
+  const CYCLE_DRIFT_MS      = 226;
+  const DESIGN_ONLINE_MS    = 65  * 60 * 1000;
+  const DESIGN_OFFLINE_MS   = 120 * 60 * 1000;
+  const DESIGN_CYCLE_MS     = DESIGN_ONLINE_MS + DESIGN_OFFLINE_MS;
+  const CYCLE_DURATION      = DESIGN_CYCLE_MS + CYCLE_DRIFT_MS;
+  const OPEN_DURATION       = Math.round(CYCLE_DURATION * DESIGN_ONLINE_MS / DESIGN_CYCLE_MS);
+  const CLOSE_DURATION      = CYCLE_DURATION - OPEN_DURATION;
 
-  // Ponto de referência
-  const INITIAL_OPEN_TIME  = new Date('2026-06-12T21:58:00.833-04:00').getTime();
-  const ADJUSTMENT_KEY     = 'rwx_hangar_timer_adjustment';
+  const CONFIG_URL          = 'https://raw.githubusercontent.com/rwxlff/RWX-Ship-Viewer/refs/heads/main/hangar-config.json';
+  const CONFIG_KEY          = 'rwx_hangar_config_cache';
+  const CONFIG_TIME_KEY     = 'rwx_hangar_config_cache_time';
+  const CACHE_DURATION      = 30 * 60 * 1000; // 30 minutos
+
+  // Ponto de referência (fallback enquanto não carrega do GitHub)
+  let INITIAL_OPEN_TIME = new Date('2026-06-12T21:58:00.833-04:00').getTime();
 
   // Thresholds das luzes
-  const GREEN_THRESHOLDS = [12/65, 24/65, 36/65, 48/65, 60/65]; // luzes apagam no OPEN
-  const RED_THRESHOLDS   = [1/5,   2/5,   3/5,   4/5,   1];     // luzes acendem no CLOSED
-  
-  // Carregar ajuste salvo
-  let savedAdjustment = 0;
-  try {
-    const saved = localStorage.getItem(ADJUSTMENT_KEY);
-    if (saved) {
-      savedAdjustment = parseInt(saved, 10) || 0;
-    }
-  } catch (e) {
-    console.warn('Error loading timer adjustment:', e);
-  }
-  
-  // savedAdjustment aplicado diretamente no now() dentro do updateTimer
+  const GREEN_THRESHOLDS    = [12/65, 24/65, 36/65, 48/65, 60/65]; // luzes apagam no OPEN
+  const RED_THRESHOLDS      = [1/5,   2/5,   3/5,   4/5,   1];     // luzes acendem no CLOSED
 
-  const lights = document.querySelectorAll(".light");
-  const mainTimerEl = document.getElementById("mainTimer");
-  const statusTextEl = document.getElementById("statusText");
+  const lights              = document.querySelectorAll(".light");
+  const mainTimerEl         = document.getElementById("mainTimer");
+  const statusTextEl        = document.getElementById("statusText");
+
+  // Carregar config do GitHub (com cache de 30min)
+  async function loadConfig() {
+    try {
+      const cachedTime = localStorage.getItem(CONFIG_TIME_KEY);
+      const cachedData = localStorage.getItem(CONFIG_KEY);
+      const now = Date.now();
+
+      // Usar cache se válido
+      if (cachedTime && cachedData && (now - parseInt(cachedTime)) < CACHE_DURATION) {
+        const config = JSON.parse(cachedData);
+        INITIAL_OPEN_TIME = new Date(config.initial_open_time).getTime();
+        console.log('Hangar config loaded from cache, patch:', config.patch);
+        updateTimerInfo(config, true);
+        return;
+      }
+
+      // Buscar do GitHub
+      const response = await fetch(CONFIG_URL);
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const config = await response.json();
+
+      INITIAL_OPEN_TIME = new Date(config.initial_open_time).getTime();
+
+      // Salvar cache
+      localStorage.setItem(CONFIG_KEY, JSON.stringify(config));
+      localStorage.setItem(CONFIG_TIME_KEY, now.toString());
+      console.log('Hangar config updated from GitHub, patch:', config.patch);
+      updateTimerInfo(config, false);
+
+    } catch (e) {
+      console.warn('Error loading hangar config, using fallback:', e);
+      updateTimerInfo(null, false);
+    }
+  }
+
+  function updateTimerInfo(config, fromCache) {
+    const el = document.getElementById('timerPatch');
+    if (!el) return;
+    if (!config) {
+      el.textContent = 'Config unavailable — using fallback';
+      return;
+    }
+    const date = config.initial_open_time.slice(0, 10);
+    el.textContent = `${config.patch} · calibrated ${date}`;
+  }
 
   function formatTime(ms) {
     const t = Math.floor(ms / 1000);
@@ -44,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function updateTimer() {
-    const now = Date.now() + savedAdjustment;
+    const now = Date.now();
     const elapsed = (now - INITIAL_OPEN_TIME) % CYCLE_DURATION;
     const timeInCycle = elapsed < 0 ? CYCLE_DURATION + elapsed : elapsed;
 
@@ -86,58 +123,10 @@ document.addEventListener('DOMContentLoaded', () => {
     mainTimerEl.textContent = formatTime(remaining);
     statusTextEl.innerHTML = status;
   }
-  
-  function syncToOpen() {
-    // Calcular o ajuste para que agora seja exatamente o início do OPEN
-    // (ignorando segundos para maior precisão do clique)
-    const nowMs = Date.now();
-    const nowSec = nowMs - (nowMs % 60000); // truncar segundos
-    const newAdjustment = INITIAL_OPEN_TIME - nowSec;
-    // Ajuste é a diferença para que timeInCycle = 0 (início do OPEN)
-    const elapsed = (nowSec - INITIAL_OPEN_TIME) % CYCLE_DURATION;
-    const timeInCycle = elapsed < 0 ? CYCLE_DURATION + elapsed : elapsed;
-    savedAdjustment = -timeInCycle;
 
-    try {
-      localStorage.setItem(ADJUSTMENT_KEY, savedAdjustment.toString());
-    } catch (e) {
-      console.warn('Error saving sync adjustment:', e);
-    }
-
-    updateResetButton();
+  // Carregar config e iniciar timer
+  loadConfig().then(() => {
     updateTimer();
-  }
-
-  function resetTime() {
-    savedAdjustment = 0;
-
-    // Limpar ajuste salvo
-    try {
-      localStorage.removeItem(ADJUSTMENT_KEY);
-    } catch (e) {
-      console.warn('Error clearing timer adjustment:', e);
-    }
-
-    updateResetButton();
-    updateTimer();
-  }
-
-  function updateResetButton() {
-    const resetBtn = document.getElementById('resetBtn');
-    const minutes = Math.round(savedAdjustment / 60000);
-
-    if (minutes === 0) {
-      resetBtn.textContent = 'Reset';
-    } else {
-      const sign = minutes > 0 ? '+' : '';
-      resetBtn.textContent = `Reset (${sign}${minutes}min)`;
-    }
-  }
-
-  document.getElementById('syncBtn').addEventListener('click', syncToOpen);
-  document.getElementById('resetBtn').addEventListener('click', resetTime);
-
-  updateResetButton();
-  updateTimer();
-  setInterval(updateTimer, 1000);
+    setInterval(updateTimer, 1000);
+  });
 });

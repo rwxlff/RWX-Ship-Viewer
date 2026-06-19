@@ -494,18 +494,14 @@
       transform: translateY(1px);
     }
 
-    .timer-btn-sync {
-      background: linear-gradient(135deg, #1a5238 0%, #0f3528 100%);
-      color: #4caf50;
-      border-color: rgba(76, 175, 80, 0.4);
-      flex: 1;
-    }
-
-    .timer-btn-sync:hover {
-      background: linear-gradient(135deg, #2a6248 0%, #1f4538 100%);
-      border-color: #4caf50;
-      box-shadow: 0 0 8px rgba(76, 175, 80, 0.4);
-      color: #fff;
+    .timer-info {
+      margin-top: 8px;
+      font-size: 9px;
+      color: #6b8da6;
+      text-align: center;
+      font-style: italic;
+      line-height: 1.3;
+      word-break: break-word;
     }
 
     .layout {
@@ -578,7 +574,7 @@
       <div class="title-block">
         <div class="title-line">
           <h1>RWX Ship Viewer</h1>
-          <span class="version">v1.0.3</span>
+          <span class="version">v1.0.4</span>
         </div>
       </div>
 
@@ -737,9 +733,8 @@
 
           <div class="timer-status" id="statusText"></div>
 
-          <div class="timer-controls">
-            <button class="timer-btn timer-btn-sync" id="syncBtn">Hangar just opened!</button>
-            <button class="timer-btn" id="resetBtn">Reset</button>
+          <div class="timer-info" id="timerInfo">
+            <span id="timerPatch">Loading...</span>
           </div>
         </div>
 
