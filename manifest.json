@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "RWX Ship Viewer",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "View all Star Citizen ships with detailed specs and prices, collected from the official RSI and UEX Corp websites.",
   "permissions": [
     "activeTab",

@@ -1,4 +1,5 @@
 {
   "initial_open_time": "2026-06-18T20:11:10.025-04:00",
+  "cycle_drift_ms": 266,
   "patch": "4.8.2-LIVE.12061511"
 }

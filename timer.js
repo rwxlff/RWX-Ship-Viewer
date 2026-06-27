@@ -1,14 +1,13 @@
 // timer.js - Executive Hangar Timer
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Constantes exatas (Atualizado 12/06/2026)
-  const CYCLE_DRIFT_MS      = 226;
+  // Constantes exatas (Atualizado 27/06/2026)
   const DESIGN_ONLINE_MS    = 65  * 60 * 1000;
   const DESIGN_OFFLINE_MS   = 120 * 60 * 1000;
   const DESIGN_CYCLE_MS     = DESIGN_ONLINE_MS + DESIGN_OFFLINE_MS;
-  const CYCLE_DURATION      = DESIGN_CYCLE_MS + CYCLE_DRIFT_MS;
-  const OPEN_DURATION       = Math.round(CYCLE_DURATION * DESIGN_ONLINE_MS / DESIGN_CYCLE_MS);
-  const CLOSE_DURATION      = CYCLE_DURATION - OPEN_DURATION;
+  let CYCLE_DURATION        = DESIGN_CYCLE_MS + 266;
+  let OPEN_DURATION         = Math.round(CYCLE_DURATION * DESIGN_ONLINE_MS / DESIGN_CYCLE_MS);
+  let CLOSE_DURATION        = CYCLE_DURATION - OPEN_DURATION;
 
   const CONFIG_URL          = 'https://raw.githubusercontent.com/rwxlff/RWX-Ship-Viewer/refs/heads/main/hangar-config.json';
   const CONFIG_KEY          = 'rwx_hangar_config_cache';
@@ -37,7 +36,9 @@ document.addEventListener('DOMContentLoaded', () => {
       if (cachedTime && cachedData && (now - parseInt(cachedTime)) < CACHE_DURATION) {
         const config = JSON.parse(cachedData);
         INITIAL_OPEN_TIME = new Date(config.initial_open_time).getTime();
-        console.log('Hangar config loaded from cache, patch:', config.patch);
+        CYCLE_DURATION    = DESIGN_CYCLE_MS + (config.cycle_drift_ms ?? 266);
+        OPEN_DURATION     = Math.round(CYCLE_DURATION * DESIGN_ONLINE_MS / DESIGN_CYCLE_MS);
+        CLOSE_DURATION    = CYCLE_DURATION - OPEN_DURATION;
         updateTimerInfo(config, true);
         return;
       }
@@ -48,11 +49,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const config = await response.json();
 
       INITIAL_OPEN_TIME = new Date(config.initial_open_time).getTime();
+      CYCLE_DURATION    = DESIGN_CYCLE_MS + (config.cycle_drift_ms ?? 226);
+      OPEN_DURATION     = Math.round(CYCLE_DURATION * DESIGN_ONLINE_MS / DESIGN_CYCLE_MS);
+      CLOSE_DURATION    = CYCLE_DURATION - OPEN_DURATION;
 
-      // Salvar cache
+      // Salvar chache
       localStorage.setItem(CONFIG_KEY, JSON.stringify(config));
       localStorage.setItem(CONFIG_TIME_KEY, now.toString());
-      console.log('Hangar config updated from GitHub, patch:', config.patch);
       updateTimerInfo(config, false);
 
     } catch (e) {
