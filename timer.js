@@ -47,13 +47,14 @@ document.addEventListener('DOMContentLoaded', () => {
       const response = await fetch(CONFIG_URL);
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const config = await response.json();
+      // Capturar data de modificação do arquivo no GitHub
+      const lastModified = response.headers.get('Last-Modified');
+      if (lastModified) config._last_modified = lastModified;
 
       INITIAL_OPEN_TIME = new Date(config.initial_open_time).getTime();
       CYCLE_DURATION    = DESIGN_CYCLE_MS + (config.cycle_drift_ms ?? 226);
       OPEN_DURATION     = Math.round(CYCLE_DURATION * DESIGN_ONLINE_MS / DESIGN_CYCLE_MS);
       CLOSE_DURATION    = CYCLE_DURATION - OPEN_DURATION;
-
-      // Salvar chache
       localStorage.setItem(CONFIG_KEY, JSON.stringify(config));
       localStorage.setItem(CONFIG_TIME_KEY, now.toString());
       updateTimerInfo(config, false);
@@ -71,8 +72,10 @@ document.addEventListener('DOMContentLoaded', () => {
       el.textContent = 'Config unavailable — using fallback';
       return;
     }
-    const date = config.initial_open_time.slice(0, 10);
-    el.textContent = `${config.patch} · calibrated ${date}`;
+    const dateStr = config._last_modified
+      ? new Date(config._last_modified).toISOString().slice(0, 10)
+      : config.initial_open_time.slice(0, 10);
+    el.textContent = `${config.patch} · calibrated ${dateStr}`;
   }
 
   function formatTime(ms) {
