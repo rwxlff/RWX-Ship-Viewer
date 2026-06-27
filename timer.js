@@ -72,9 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
       el.textContent = 'Config unavailable — using fallback';
       return;
     }
-    const dateStr = config._last_modified
-      ? new Date(config._last_modified).toISOString().slice(0, 10)
-      : config.initial_open_time.slice(0, 10);
+    const dateStr = config.calibrated || config.initial_open_time.slice(0, 10);
     el.textContent = `${config.patch} · calibrated ${dateStr}`;
   }
 
