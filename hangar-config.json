@@ -1,6 +1,6 @@
 {
-  "initial_open_time": "2026-07-01T09:42:31.076-04:00",
+  "initial_open_time": "2026-07-15T23:24:55.123-04:00",
   "cycle_drift_ms": 266,
-  "patch": "4.8.3-LIVE.12122953",
-  "calibrated": "2026-07-01"
+  "patch": "4.9.0-LIVE.12232306",
+  "calibrated": "2026-07-15"
 }
