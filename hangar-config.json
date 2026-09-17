@@ -1,6 +1,6 @@
   {
-    "initial_open_time": "2026-09-04T22:50:47.255Z",
+    "initial_open_time": "2026-09-16T19:05:05.639Z",
     "cycle_drift_ms": 1027,
-    "patch": "4.10.0-HOTFIX.12572603",
-    "calibrated": "2026-09-04"
+    "patch": "4.10.1-LIVE.12660092",
+    "calibrated": "2026-09-16"
   }
